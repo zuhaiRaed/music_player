@@ -1,0 +1,18 @@
+{
+  "app_name": "Music Player",
+  "noInternetMsg": "نعتذر لا يوجد اتصال بالانترنت",
+  "noInternet": "لايوجد اتصال بالانترنت",
+  "yes": "نعم",
+  "no": "لا",
+  "somethingWentWrong": "لقد حدث خطأ ما",
+  "tryAgain": "حاول مجددا",
+  "copiedMsg": "تم النسخ",
+  "ok": "حسناً",
+  "error": "خطأ",
+  "allSongs": "جميع الأغاني",
+  "nowPlaying": "قيد التشغيل الآن",
+    "follow": "تابع",
+  "shufflePlay": "تشغيل عشوائي"
+
+
+}

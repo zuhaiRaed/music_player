@@ -1,0 +1,17 @@
+{
+  "app_name": "Music Player",
+  "noInternet": "No internet access",
+  "noInternetMsg": "There is no internet connection. Please check your network settings and try again.",
+  "yes": "Yes",
+  "no": "No",
+  "somethingWentWrong": "Something went wrong",
+  "tryAgain": "Try again",
+  "copiedMsg": "Copied to clipboard",
+  "ok": "Ok",
+  "error": "Error",
+  "allSongs": "All Songs",
+  "nowPlaying": "Now PLAYING",
+  "follow": "Follow",
+  "shufflePlay": "Shuffle Play"
+
+}

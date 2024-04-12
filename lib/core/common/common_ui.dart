@@ -84,7 +84,7 @@ mixin CommonUi {
         ),
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: backgroundColor,
+        backgroundColor: backgroundColor ?? Style.surfaceContainer,
         showCloseIcon: showCloseIcon,
         closeIconColor: Style.secondary,
         duration: Duration(milliseconds: durationMilliSeconds ?? 3000),

@@ -41,6 +41,20 @@ class Utils {
     return json.decode(str);
   }
 
+  static String timerFormat(int seconds) {
+    final hours = seconds ~/ 3600;
+    final minutes = (seconds % 3600) ~/ 60;
+    final remainingSeconds = seconds % 60;
+
+    final hoursString = hours.toString().padLeft(2, '0');
+    final minutesString = minutes.toString().padLeft(1, '0');
+    final secondsString = remainingSeconds.toString().padLeft(2, '0');
+
+    return hoursString == '00'
+        ? '$minutesString:$secondsString'
+        : '$hoursString:$minutesString:$secondsString';
+  }
+
   static String parseUrl(String url) {
     if (url.startsWith('http://')) {
       url = 'https://${url.substring(7)}';

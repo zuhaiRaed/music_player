@@ -1,49 +1,79 @@
 import 'dart:convert';
-import 'dart:typed_data';
-
 import '../core/utils/generate_id.dart';
 
 class SongModel {
-  String songId = generateId();
+  String id = generateId();
   String? songName;
   String? singerName;
   String? albumName;
   String? songImageUrl;
+  String? songUrl;
   int? duration;
-  String? status;
-  Uint8List? waveformData;
+  List<int>? waveformData;
+  List<SongModel>? queue;
 
   SongModel({
     this.songName,
     this.singerName,
     this.albumName,
     this.songImageUrl,
+    this.songUrl,
     this.duration,
-    this.status,
     this.waveformData,
+    this.queue,
   });
   factory SongModel.fromJson(String str) => SongModel.fromMap(json.decode(str));
   String toJson() => json.encode(toMap());
   SongModel.fromMap(Map<String, dynamic> json)
-      : songId = json['songId'],
+      : id = json['id'],
         songName = json['songName'],
         singerName = json['singerName'],
         albumName = json['albumName'],
         songImageUrl = json['songImageUrl'],
+        songUrl = json['songUrl'],
         duration = json['duration'],
-        status = json['status'],
-        waveformData = json['waveformData'] != null
-            ? Uint8List.fromList(json['waveformData'].cast<int>())
-            : null;
+        // check if it is null or not
+        waveformData = json['waveformData'] == null
+            ? null
+            : List<int>.from(json['waveformData']),
+        queue = json['queue'] == null
+            ? null
+            : List<SongModel>.from(
+                json['queue'].map((x) => SongModel.fromMap(x)),
+              );
 
   Map<String, dynamic> toMap() => {
-        'songId': songId.toString(),
+        'id': id.toString(),
         'songName': songName.toString(),
         'singerName': singerName.toString(),
         'albumName': albumName.toString(),
         'songImageUrl': songImageUrl.toString(),
+        'songUrl': songUrl.toString(),
         'duration': duration,
-        'status': status.toString(),
-        'waveformData': waveformData?.toList(),
+        'waveformData': waveformData,
+        'queue': queue,
       };
+
+  // copyWith method
+  SongModel copyWith({
+    String? songName,
+    String? singerName,
+    String? albumName,
+    String? songImageUrl,
+    String? songUrl,
+    int? duration,
+    List<SongModel>? queue,
+  }) {
+    return SongModel(
+      songName: songName ?? this.songName,
+      singerName: singerName ?? this.singerName,
+      albumName: albumName ?? this.albumName,
+      songImageUrl: songImageUrl ?? this.songImageUrl,
+      songUrl: songUrl ?? this.songUrl,
+      duration: duration ?? this.duration,
+      queue: queue ?? this.queue,
+    );
+  }
 }
+
+enum AudioPlayerState { none, stopped, playing, paused }

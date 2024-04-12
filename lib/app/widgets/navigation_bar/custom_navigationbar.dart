@@ -2,12 +2,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../../core/application.dart';
+import '../../routes/app_router.dart';
 import '/core/style/assets.dart';
 import '/core/style/style.dart';
-import 'mini_player.dart';
-import 'navigation_bar/navigationbar_button.dart';
+import '../mini_player.dart';
+import 'navigationbar_button.dart';
 
-enum NavigationType { home, search, podcast, settings }
+enum NavigationType { home, search,  podcast, settings }
 
 typedef OnNavigationTap = Function(NavigationType);
 
@@ -70,7 +72,9 @@ class CustomNavigationBar extends HookWidget {
                             shape: BoxShape.circle,
                           ),
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              application.appRouter.push(const FirebaseManageRoute());
+                            },
                             child: SvgPicture.asset(
                               SvgAssets.headset,
                               height: 20,

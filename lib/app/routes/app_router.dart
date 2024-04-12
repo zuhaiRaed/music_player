@@ -1,4 +1,7 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import '../screens/firebase_manage_screen.dart';
+import '/models/song_model.dart';
 import '../screens/player/player_screen.dart';
 import '../screens/podcast/podcast_screen.dart';
 import '../screens/home/home_screen.dart';
@@ -23,6 +26,7 @@ class AppRouter extends _$AppRouter {
           ],
         ),
         AutoRoute(page: PlayerRoute.page),
+        AutoRoute(page: FirebaseManageRoute.page),
       ];
 }
 //cmd  dart run build_runner build --delete-conflicting-outputs

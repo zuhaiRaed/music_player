@@ -15,6 +15,12 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    FirebaseManageRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const FirebaseManageScreen(),
+      );
+    },
     HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -28,9 +34,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     PlayerRoute.name: (routeData) {
+      final args = routeData.argsAs<PlayerRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const PlayerScreen(),
+        child: PlayerScreen(
+          key: args.key,
+          song: args.song,
+        ),
       );
     },
     PodcastRoute.name: (routeData) {
@@ -58,6 +68,20 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [FirebaseManageScreen]
+class FirebaseManageRoute extends PageRouteInfo<void> {
+  const FirebaseManageRoute({List<PageRouteInfo>? children})
+      : super(
+          FirebaseManageRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'FirebaseManageRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -90,16 +114,39 @@ class MainRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [PlayerScreen]
-class PlayerRoute extends PageRouteInfo<void> {
-  const PlayerRoute({List<PageRouteInfo>? children})
-      : super(
+class PlayerRoute extends PageRouteInfo<PlayerRouteArgs> {
+  PlayerRoute({
+    Key? key,
+    required SongModel song,
+    List<PageRouteInfo>? children,
+  }) : super(
           PlayerRoute.name,
+          args: PlayerRouteArgs(
+            key: key,
+            song: song,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'PlayerRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<PlayerRouteArgs> page = PageInfo<PlayerRouteArgs>(name);
+}
+
+class PlayerRouteArgs {
+  const PlayerRouteArgs({
+    this.key,
+    required this.song,
+  });
+
+  final Key? key;
+
+  final SongModel song;
+
+  @override
+  String toString() {
+    return 'PlayerRouteArgs{key: $key, song: $song}';
+  }
 }
 
 /// generated route for

@@ -35,6 +35,9 @@ dependencies:
   flutter_snake_navigationbar: ^0.6.1
   firebase_core: ^2.15.1
   cloud_firestore: ^4.13.6
+  shimmer: ^3.0.0
+  # audioplayers: ^6.0.0
+  # audio_service: ^0.18.13
 
 
 

@@ -1,53 +1,8 @@
-import 'dart:typed_data';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import '../../../../core/style/style.dart';
-
-class AudioService {
-  static final FlutterSoundHelper _soundHelper = FlutterSoundHelper();
-
-  static Future<String?> fetchAudio(String url) async {
-    try {
-      final dio = Dio();
-      final response = await dio.get(
-        url,
-        options: Options(responseType: ResponseType.bytes),
-      );
-
-      final directory = await getTemporaryDirectory();
-      final filePath = '${directory.path}/temp.wav';
-      final file = File(filePath);
-      await file.writeAsBytes(response.data);
-      return filePath;
-    } catch (e) {
-      debugPrint('Error fetching audio: $e');
-      return null;
-    }
-  }
-
-  static Future<Uint8List?> decodeAudio(String filePath) async {
-    try {
-      // Load the audio file into memory
-      final File file = File(filePath);
-      final Uint8List inputBuffer = await file.readAsBytes();
-
-      // Decode the audio file from the buffer
-      final decodedData =
-          _soundHelper.waveToPCMBuffer(inputBuffer: inputBuffer);
-
-      return decodedData;
-    } catch (e) {
-      debugPrint('Error decoding audio: $e');
-      return null;
-    }
-  }
-}
+import '/core/style/style.dart';
 
 class WaveformPainter extends CustomPainter {
-  final Uint8List waveform;
+  final List<int> waveform;
   WaveformPainter(this.waveform);
 
   @override
@@ -60,7 +15,7 @@ class WaveformPainter extends CustomPainter {
     // Center line of the waveform
     double centerY = size.height / 2;
     // How many pixels each waveform line will take up on the canvas
-    double pixelsPerWaveLine = 1; // Adjust this to 'zoom in' on the waveform
+    double pixelsPerWaveLine = 2; // Adjust this to 'zoom in' on the waveform
 
     // Process every pair of bytes
     for (int i = 0; i < waveform.length - 1; i += 2) {
@@ -68,7 +23,7 @@ class WaveformPainter extends CustomPainter {
       // Convert to signed 16-bit value
       sample = sample & 0x8000 != 0 ? sample - 0xFFFF - 1 : sample;
       // Normalize to the range of the canvas
-      double y = (sample / 32768.0) * centerY;
+      double y = (sample / 22768.0) * centerY;
 
       // Determine the X position of the waveform line
       double x = (i / 2) * pixelsPerWaveLine;
@@ -87,45 +42,15 @@ class WaveformPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
-class AudioWaveform extends StatefulWidget {
-  final String url;
-  const AudioWaveform({super.key, required this.url});
-
-  @override
-  State<AudioWaveform> createState() => _AudioWaveformState();
-}
-
-class _AudioWaveformState extends State<AudioWaveform> {
-  Uint8List? _waveform;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAudio();
-  }
-
-  Future<void> _loadAudio() async {
-    final filePath = await AudioService.fetchAudio(widget.url);
-    if (filePath != null) {
-      final waveform = await AudioService.decodeAudio(filePath);
-      if (waveform != null) {
-        setState(() => _waveform = waveform);
-      }
-    }
-  }
+class AudioWaveform extends StatelessWidget {
+  final List<int>? waveform;
+  const AudioWaveform({super.key, required this.waveform});
 
   @override
   Widget build(BuildContext context) {
-    print(_waveform);
-    return _waveform != null
-        ? CustomPaint(
-            painter: WaveformPainter(_waveform!),
-            size: const Size(double.infinity, 60), // Set your desired height
-          )
-        : LinearProgressIndicator(
-            valueColor:
-                AlwaysStoppedAnimation<Color>(Style.secondary.withOpacity(0.4)),
-            backgroundColor: Style.secondary.withOpacity(0.1),
-          );
+    return CustomPaint(
+      painter: WaveformPainter(waveform ?? []),
+      size: const Size(double.infinity, 60), // Set your desired height
+    );
   }
 }

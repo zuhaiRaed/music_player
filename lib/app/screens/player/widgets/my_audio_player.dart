@@ -73,7 +73,9 @@ class MyAudioPlayer extends HookConsumerWidget {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  ref.read(playerManagerProvider(url).notifier).rewind();
+                },
                 icon: SvgPicture.asset(
                   SvgAssets.rewind,
                   colorFilter: const ColorFilter.mode(
@@ -104,7 +106,9 @@ class MyAudioPlayer extends HookConsumerWidget {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  ref.read(playerManagerProvider(url).notifier).fastForword();
+                },
                 icon: SvgPicture.asset(
                   SvgAssets.fastForward,
                   colorFilter: const ColorFilter.mode(

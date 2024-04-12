@@ -101,6 +101,38 @@ class PlayerManager extends StateNotifier<MyPlayerState> {
     }
   }
 
+  void fastForword() {
+    _audioPlayer.seek(_audioPlayer.position + const Duration(seconds: 10));
+  }
+
+  void rewind() {
+    _audioPlayer.seek(_audioPlayer.position - const Duration(seconds: 10));
+  }
+
+  void skipForward() {
+    final songs = ref.read(cachedSongsProvider.notifier).state;
+    final currentSong = ref.read(currentSongProvider);
+    final currentIndex = songs?.indexOf(currentSong!);
+
+    if (currentIndex != null && currentIndex < songs!.length - 1) {
+      final nextSong = songs[currentIndex + 1];
+      ref.read(playerManagerProvider(nextSong.songUrl ?? '').notifier).play();
+    }
+  }
+
+  void skipBackward() {
+    final songs = ref.read(cachedSongsProvider.notifier).state;
+    final currentSong = ref.read(currentSongProvider);
+    final currentIndex = songs?.indexOf(currentSong!);
+
+    if (currentIndex != null && currentIndex > 0) {
+      final previousSong = songs?[currentIndex - 1];
+      ref
+          .read(playerManagerProvider(previousSong?.songUrl ?? '').notifier)
+          .play();
+    }
+  }
+
   void setSpeed(double speed) {
     _audioPlayer.setSpeed(speed);
   }

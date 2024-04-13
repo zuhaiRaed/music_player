@@ -62,6 +62,10 @@ class _CustomNavigationBarState extends State<CustomNavigationBar>
 
     widthAnimation = TweenSequence([
       TweenSequenceItem(
+        tween: Tween<double>(begin: baseWidth, end: compressedWidth),
+        weight: compressedWidth,
+      ),
+      TweenSequenceItem(
         tween:
             Tween<double>(begin: baseWidth, end: compressedWidth), // Compress
         weight: compressedWidth,
@@ -88,7 +92,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar>
     ).animate(
       CurvedAnimation(
         parent: controller,
-        curve: Curves.easeInToLinear,
+        curve: isMovingRight ? Curves.easeInToLinear : Curves.easeIn,
       ),
     );
 
@@ -119,7 +123,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar>
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 31, sigmaY: 31),
             child: Container(
-              height: kToolbarHeight + MediaQuery.of(context).padding.bottom,
+              // height: kToolbarHeight + MediaQuery.of(context).padding.bottom,
               alignment: Alignment.topCenter,
               decoration: BoxDecoration(
                 color: Style.surfaceContainer.withOpacity(0.9),
@@ -134,82 +138,85 @@ class _CustomNavigationBarState extends State<CustomNavigationBar>
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        NavigationBarButton(
-                          isActive: selectedTab == NavigationType.home,
-                          svg: SvgAssets.home,
-                          onPressed: () => onTapClick(NavigationType.home),
-                        ),
-                        NavigationBarButton(
-                          isActive: selectedTab == NavigationType.search,
-                          svg: SvgAssets.search,
-                          onPressed: () => onTapClick(NavigationType.search),
-                        ),
-                        Container(
-                          height: 45,
-                          width: 45,
-                          decoration: const BoxDecoration(
-                            color: Style.primary,
-                            shape: BoxShape.circle,
+                child: SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          NavigationBarButton(
+                            isActive: selectedTab == NavigationType.home,
+                            svg: SvgAssets.home,
+                            onPressed: () => onTapClick(NavigationType.home),
                           ),
-                          child: TextButton(
-                            onPressed: () {
-                              onTapClick(NavigationType.centerButton);
-                            },
-                            child: SvgPicture.asset(
-                              SvgAssets.headset,
-                              height: 20,
-                              colorFilter: const ColorFilter.mode(
-                                Style.secondary,
-                                BlendMode.srcIn,
-                              ),
+                          NavigationBarButton(
+                            isActive: selectedTab == NavigationType.search,
+                            svg: SvgAssets.search,
+                            onPressed: () => onTapClick(NavigationType.search),
+                          ),
+                          Container(
+                            height: 45,
+                            width: 45,
+                            decoration: const BoxDecoration(
+                              color: Style.primary,
+                              shape: BoxShape.circle,
                             ),
-                          ),
-                        ),
-                        NavigationBarButton(
-                          isActive: selectedTab == NavigationType.podcast,
-                          svg: SvgAssets.podcast,
-                          onPressed: () => onTapClick(NavigationType.podcast),
-                        ),
-                        NavigationBarButton(
-                          isActive: selectedTab == NavigationType.settings,
-                          svg: SvgAssets.settings,
-                          onPressed: () => onTapClick(NavigationType.settings),
-                        ),
-                      ],
-                    ),
-                    AnimatedBuilder(
-                      animation: controller,
-                      builder: (_, __) => SizedBox(
-                        height: 5,
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              bottom: 0,
-                              left: positionAnimation?.value ??
-                                  0 - (widthAnimation?.value ?? 20) / 2,
-                              child: Container(
-                                width: widthAnimation?.value ?? 20,
-                                height: 5,
-                                decoration: BoxDecoration(
-                                  color:
-                                      selectedTab == NavigationType.centerButton
-                                          ? Colors.transparent
-                                          : Style.primary,
-                                  borderRadius: BorderRadius.circular(20),
+                            child: TextButton(
+                              onPressed: () {
+                                onTapClick(NavigationType.centerButton);
+                              },
+                              child: SvgPicture.asset(
+                                SvgAssets.headset,
+                                height: 20,
+                                colorFilter: const ColorFilter.mode(
+                                  Style.secondary,
+                                  BlendMode.srcIn,
                                 ),
                               ),
                             ),
-                          ],
+                          ),
+                          NavigationBarButton(
+                            isActive: selectedTab == NavigationType.podcast,
+                            svg: SvgAssets.podcast,
+                            onPressed: () => onTapClick(NavigationType.podcast),
+                          ),
+                          NavigationBarButton(
+                            isActive: selectedTab == NavigationType.settings,
+                            svg: SvgAssets.settings,
+                            onPressed: () =>
+                                onTapClick(NavigationType.settings),
+                          ),
+                        ],
+                      ),
+                      AnimatedBuilder(
+                        animation: controller,
+                        builder: (_, __) => SizedBox(
+                          height: 5,
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                bottom: 0,
+                                left: positionAnimation?.value ??
+                                    0 - (widthAnimation?.value ?? 20) / 2,
+                                child: Container(
+                                  width: widthAnimation?.value ?? 20,
+                                  height: 5,
+                                  decoration: BoxDecoration(
+                                    color: selectedTab ==
+                                            NavigationType.centerButton
+                                        ? Colors.transparent
+                                        : Style.primary,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

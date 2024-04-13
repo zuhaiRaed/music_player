@@ -5,8 +5,8 @@ import '/models/player_state_model.dart';
 import 'firebase_controller.dart';
 
 final playerManagerProvider = StateNotifierProvider.autoDispose
-    .family<PlayerManager, MyPlayerState, String>(
-  (ref, url) => PlayerManager(url, ref),
+    .family<PlayerController, MyPlayerState, String>(
+  (ref, url) => PlayerController(url, ref),
 );
 
 final currentlyPlayingIdProvider = StateProvider<String?>((ref) => null);
@@ -15,12 +15,12 @@ final currentSongProvider = StateProvider<SongModel?>((ref) {
   return;
 });
 
-class PlayerManager extends StateNotifier<MyPlayerState> {
+class PlayerController extends StateNotifier<MyPlayerState> {
   final String urlLink;
   final Ref ref;
   late final AudioPlayer _audioPlayer;
 
-  PlayerManager(this.urlLink, this.ref) : super(MyPlayerState.initial()) {
+  PlayerController(this.urlLink, this.ref) : super(MyPlayerState.initial()) {
     _init();
   }
 

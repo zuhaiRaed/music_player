@@ -3,7 +3,7 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '/controllers/player_manager.dart';
+import '../../controllers/player_controller.dart';
 import '/core/application.dart';
 import '/core/common/load_image.dart';
 import '/core/style/assets.dart';

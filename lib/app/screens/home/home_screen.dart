@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../../../controllers/player_manager.dart';
+import '../../../controllers/player_controller.dart';
 import '../../../models/player_state_model.dart';
 import '/controllers/firebase_controller.dart';
 import '/core/application.dart';

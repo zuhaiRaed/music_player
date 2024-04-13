@@ -32,7 +32,6 @@ class SongModel {
         songImageUrl = json['songImageUrl'],
         songUrl = json['songUrl'],
         duration = json['duration'],
-        // check if it is null or not
         waveformData = json['waveformData'] == null
             ? null
             : List<int>.from(json['waveformData']),

@@ -6,7 +6,7 @@ import '../../../../models/player_state_model.dart';
 import '/core/common/app_padding.dart';
 import '/core/style/assets.dart';
 import '/core/style/style.dart';
-import '../../../../controllers/player_manager.dart';
+import '../../../../controllers/player_controller.dart';
 
 class MyAudioPlayer extends HookConsumerWidget {
   final String url;

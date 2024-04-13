@@ -37,7 +37,7 @@ class Utils {
     return hasConnection;
   }
 
-  static dynamic getjsonFronStr(String str) {
+  static dynamic getjsonFromStr(String str) {
     return json.decode(str);
   }
 

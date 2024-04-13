@@ -114,7 +114,7 @@ class FirebaseManageScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manager Screen'),
+        title: const Text('Firebase Manager Screen'),
       ),
       body: SafeArea(
         child: Column(
@@ -163,22 +163,41 @@ class FirebaseManageScreen extends HookConsumerWidget {
               onPressed: () async {
                 isLoading.value = true;
 
+                // first check if the song is already added to Firestore or not
+                // if not then add the song to Firestore
+                final songsInFirebase = ref.watch(cachedSongsProvider);
                 for (var song in demoSongs) {
-                  // print(song.waveformData);
-                  await firebaseController.addSong(song).then((value) {
-                    isLoading.value = false;
-                    if (value) {
-                      CommonUi.snackBar(context, 'Songs added to Firestore');
-                    } else {
-                      CommonUi.snackBar(
-                        context,
-                        'Failed to add songs to Firestore',
-                      );
-                    }
-                  });
+                  (songsInFirebase ?? [])
+                          .where((element) => element.songName == song.songName)
+                          .toList()
+                          .isEmpty
+                      ? await firebaseController.addSong(song).then((value) {
+                          isLoading.value = false;
+                          if (value) {
+                            CommonUi.snackBar(
+                              context,
+                              '${song.songName} added to Firestore',
+                              backgroundColor: Colors.green,
+                            );
+                          } else {
+                            CommonUi.snackBar(
+                              context,
+                              'Failed to add ${song.songName} to Firestore',
+                              backgroundColor: Colors.red,
+                            );
+                          }
+                        })
+                      : {
+                          isLoading.value = false,
+                          CommonUi.snackBar(
+                            context,
+                            '${song.songName} already added to Firestore',
+                            backgroundColor: Colors.orange,
+                          ),
+                        };
                 }
               },
-              text: ('Add Songs'),
+              text: ('Add Songs From List to Firestore'),
             ),
           ],
         ),

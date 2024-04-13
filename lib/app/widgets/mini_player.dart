@@ -3,12 +3,12 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../../controllers/player_manager.dart';
-import '../../core/application.dart';
-import '../../core/common/load_image.dart';
-import '../../core/style/assets.dart';
-import '../../core/style/style.dart';
-import '../../models/player_state_model.dart';
+import '/controllers/player_manager.dart';
+import '/core/application.dart';
+import '/core/common/load_image.dart';
+import '/core/style/assets.dart';
+import '/core/style/style.dart';
+import '/models/player_state_model.dart';
 import '../routes/app_router.dart';
 
 class MiniPlayer extends ConsumerWidget {
@@ -123,8 +123,10 @@ class MiniPlayer extends ConsumerWidget {
                                       visualDensity: VisualDensity.compact,
                                       onPressed: () {
                                         ref
-                                            .read(playerManagerProvider(url)
-                                                .notifier)
+                                            .read(
+                                              playerManagerProvider(url)
+                                                  .notifier,
+                                            )
                                             .skipForward();
                                       },
                                       icon: SvgPicture.asset(

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/common/common_ui.dart';
 import '../routes/app_router.dart';
 import '../widgets/navigation_bar/custom_navigationbar.dart';
 
@@ -10,29 +11,11 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final navigationTabs = [
-    //   NavigationBarModel(
-    //     svgIcon: SvgAssets.home,
-    //     label: 'All Songs',
-    //   ),
-    //   NavigationBarModel(
-    //     svgIcon: SvgAssets.search,
-    //     label: 'Search',
-    //   ),
-    //   NavigationBarModel(
-    //     svgIcon: SvgAssets.podcast,
-    //     label: 'Podcast',
-    //   ),
-    //   NavigationBarModel(
-    //     svgIcon: SvgAssets.settings,
-    //     label: 'Settings',
-    //   ),
-    // ];
-
     return AutoTabsRouter(
       routes: const [
         HomeRoute(),
         SearchRoute(),
+        FirebaseManageRoute(),
         PodcastRoute(),
         SettingsRoute(),
       ],

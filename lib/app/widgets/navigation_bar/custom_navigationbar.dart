@@ -1,30 +1,116 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../../core/application.dart';
-import '../../routes/app_router.dart';
 import '/core/style/assets.dart';
 import '/core/style/style.dart';
 import '../mini_player.dart';
 import 'navigationbar_button.dart';
 
-enum NavigationType { home, search,  podcast, settings }
+enum NavigationType { home, search, centerButton, podcast, settings }
 
 typedef OnNavigationTap = Function(NavigationType);
 
-class CustomNavigationBar extends HookWidget {
+class CustomNavigationBar extends StatefulWidget {
   final OnNavigationTap onNavigationTap;
+
   const CustomNavigationBar({super.key, required this.onNavigationTap});
 
   @override
-  Widget build(BuildContext context) {
-    final selectedIndex = useState<NavigationType>(NavigationType.home);
-    onTapClick(NavigationType type) {
-      onNavigationTap(type);
-      selectedIndex.value = type;
+  State<CustomNavigationBar> createState() => _CustomNavigationBarState();
+}
+
+class _CustomNavigationBarState extends State<CustomNavigationBar>
+    with SingleTickerProviderStateMixin {
+  NavigationType selectedTab = NavigationType.home;
+  int selectedIndex = 0;
+  late AnimationController controller;
+  Animation<double>? positionAnimation;
+  Animation<double>? widthAnimation;
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateAnimations(selectedIndex);
+    });
+  }
+
+  void _updateAnimations(int newIndex) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final numberOfIconIcons =
+        NavigationType.values.length; // Total icons including the middle one
+    final paddingBetweenIcons = (screenWidth - (numberOfIconIcons * 45)) /
+        (numberOfIconIcons + 1); // Calculate the padding between icons
+    const iconWidth = 45.0;
+
+    // Calculate the center of the icon's position
+    double getIconCenter(int index) {
+      return paddingBetweenIcons * (index + 1) +
+          iconWidth * index +
+          iconWidth / 2;
     }
 
+    final start = getIconCenter(selectedIndex);
+    final end = getIconCenter(newIndex);
+    final isMovingRight = newIndex > selectedIndex;
+    const double baseWidth = 15.0;
+    const double compressedWidth = 5.0; //  for "compress" effect
+    const double expandedWidth = 60; // Expanded width for "release" effect
+
+    widthAnimation = TweenSequence([
+      TweenSequenceItem(
+        tween:
+            Tween<double>(begin: baseWidth, end: compressedWidth), // Compress
+        weight: compressedWidth,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(
+          begin: compressedWidth,
+          end: expandedWidth,
+        ), // Expand to maximum
+        weight: expandedWidth,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(
+          begin: expandedWidth,
+          end: baseWidth,
+        ), // Return to normal
+        weight: baseWidth,
+      ),
+    ]).animate(controller);
+
+    positionAnimation = Tween<double>(
+      begin: start - baseWidth / 2, // Centering the animation on the icon
+      end: end - baseWidth / 2,
+    ).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Curves.easeInToLinear,
+      ),
+    );
+
+    controller.reset();
+    controller.forward();
+    setState(() {
+      selectedIndex = newIndex;
+    });
+  }
+
+  onTapClick(NavigationType type) {
+    widget.onNavigationTap(type);
+    setState(() {
+      selectedTab = type;
+    });
+    if (type.index != selectedIndex) {
+      _updateAnimations(type.index);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -48,19 +134,19 @@ class CustomNavigationBar extends HookWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Stack(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         NavigationBarButton(
-                          isActive: selectedIndex.value == NavigationType.home,
+                          isActive: selectedTab == NavigationType.home,
                           svg: SvgAssets.home,
                           onPressed: () => onTapClick(NavigationType.home),
                         ),
                         NavigationBarButton(
-                          isActive:
-                              selectedIndex.value == NavigationType.search,
+                          isActive: selectedTab == NavigationType.search,
                           svg: SvgAssets.search,
                           onPressed: () => onTapClick(NavigationType.search),
                         ),
@@ -73,7 +159,7 @@ class CustomNavigationBar extends HookWidget {
                           ),
                           child: TextButton(
                             onPressed: () {
-                              application.appRouter.push(const FirebaseManageRoute());
+                              onTapClick(NavigationType.centerButton);
                             },
                             child: SvgPicture.asset(
                               SvgAssets.headset,
@@ -86,20 +172,43 @@ class CustomNavigationBar extends HookWidget {
                           ),
                         ),
                         NavigationBarButton(
-                          isActive:
-                              selectedIndex.value == NavigationType.podcast,
+                          isActive: selectedTab == NavigationType.podcast,
                           svg: SvgAssets.podcast,
                           onPressed: () => onTapClick(NavigationType.podcast),
                         ),
                         NavigationBarButton(
-                          isActive:
-                              selectedIndex.value == NavigationType.settings,
+                          isActive: selectedTab == NavigationType.settings,
                           svg: SvgAssets.settings,
                           onPressed: () => onTapClick(NavigationType.settings),
                         ),
                       ],
                     ),
-                    // A sanke indicator
+                    AnimatedBuilder(
+                      animation: controller,
+                      builder: (_, __) => SizedBox(
+                        height: 5,
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              bottom: 0,
+                              left: positionAnimation?.value ??
+                                  0 - (widthAnimation?.value ?? 20) / 2,
+                              child: Container(
+                                width: widthAnimation?.value ?? 20,
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  color:
+                                      selectedTab == NavigationType.centerButton
+                                          ? Colors.transparent
+                                          : Style.primary,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -109,52 +218,10 @@ class CustomNavigationBar extends HookWidget {
       ],
     );
   }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 }
-
-// class SnakeIndicator extends StatelessWidget {
-//   final int selectedIndex;
-//   final int tabsCount;
-
-//   SnakeIndicator({required this.selectedIndex, required this.tabsCount});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return LayoutBuilder(
-//       builder: (context, constraints) {
-//         final tabWidth = constraints.maxWidth / tabsCount;
-//         final indicatorWidth = tabWidth - 40;
-//         final left = tabWidth * selectedIndex + 20;
-
-//         return AnimatedContainer(
-//           duration: Duration(milliseconds: 300),
-//           curve: Curves.easeInOut,
-//           margin: EdgeInsets.only(left: left),
-//           width: indicatorWidth,
-//           height: 4,
-//           decoration: BoxDecoration(
-//             color: Colors.blue, // Adjust color as needed
-//             borderRadius: BorderRadius.circular(10),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
-
-//  AnimatedPositioned(
-//                       duration: const Duration(milliseconds: 300),
-//                       curve: Curves.easeInOut,
-//                       left: (size.width / 4) * selectedIndex.value.index + 50,
-//                       bottom: 0,
-//                       child: AnimatedContainer(
-//                         height: 4,
-//                         // change the width of the indicator based on the active tab
-//                         width: 12,
-
-//                         decoration: BoxDecoration(
-//                           color: Style.primary,
-//                           borderRadius: BorderRadius.circular(10),
-//                         ),
-//                         duration: const Duration(milliseconds: 300),
-//                       ),
-//                     ),

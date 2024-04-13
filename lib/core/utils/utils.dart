@@ -21,7 +21,7 @@ String toCamelCase(String str) {
 
 class Utils {
   static Future<bool> isOnline() async {
-    var hasConnection = false;
+    bool hasConnection = false;
 
     try {
       final result = await InternetAddress.lookup('google.com');

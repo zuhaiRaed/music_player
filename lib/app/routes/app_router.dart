@@ -21,12 +21,12 @@ class AppRouter extends _$AppRouter {
           children: [
             AutoRoute(page: HomeRoute.page),
             AutoRoute(page: SearchRoute.page),
+            AutoRoute(page: FirebaseManageRoute.page),
             AutoRoute(page: PodcastRoute.page),
             AutoRoute(page: SettingsRoute.page),
           ],
         ),
         AutoRoute(page: PlayerRoute.page),
-        AutoRoute(page: FirebaseManageRoute.page),
       ];
 }
 //cmd  dart run build_runner build --delete-conflicting-outputs

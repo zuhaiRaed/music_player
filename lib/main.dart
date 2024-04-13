@@ -8,7 +8,6 @@ import 'core/lang/app_localizations.dart';
 import 'core/managers/user_manager.dart';
 import 'firebase_options.dart';
 
-// TODO: Check the comon file when you have done
 Future<void> initApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

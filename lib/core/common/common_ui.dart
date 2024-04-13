@@ -8,6 +8,7 @@ import 'dialogs.dart';
 mixin CommonUi {
   /// THIS METHOD USED TO CHECK IF THE INTERNET IS WORKING OR NOT, AND IF NOT THE PHONE SETTING WILL OPEN
   static bool checkInternetShown = false;
+
   static Future<void> checkInternet(BuildContext context) async {
     final isOnline = await Utils.isOnline();
     if (!isOnline && !checkInternetShown && context.mounted) {
